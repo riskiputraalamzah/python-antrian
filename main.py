@@ -1,20 +1,9 @@
-tampungAntrian = [
-    # {0: 1},
-    # {0: 2},
-    # {0: 3},
-    # {0: 4},
-    # {1: 1},
-    # {1: 2},
-    # {1: 3},
-    # {2: 1},
-    # {2: 2},
-    # {2: 3},
-    # {3: 1},
-    # {3: 2},
-]
+tampungAntrian = []
 
 
 menuTersedia = ['POLI UMUM', 'POLI GIGI', 'POLI ANAK', 'POLI JANTUNG']
+
+hasClickedDeleteDataByPoli = False
 
 
 def antrianByMenu(index):
@@ -30,11 +19,16 @@ def antrianByMenu(index):
 def cekAntrian(index):
     allAntrian = antrianByMenu(index)
 
-    antrianAnda = len(allAntrian)+1 if len(allAntrian) > 0 else 1
+    # antrianAnda = len(allAntrian)+1 if len(allAntrian) > 0 else 1
 
-    # print(allAntrian)
-    # print(antrianAnda)
-    # return False
+    if (len(allAntrian)):
+        if hasClickedDeleteDataByPoli:
+            antrianAnda = int(allAntrian[len(allAntrian) - 1])+1
+        else:
+            antrianAnda = len(allAntrian)+1
+    else:
+        antrianAnda = 1
+
     pushAntrian(index, antrianAnda)
 
     return [
@@ -50,11 +44,12 @@ def pushAntrian(indexMenu, antrian):
 
 def deleteData(index):
     antrianTerdepan = antrianByMenu(index)
-
+    print("\n")
     if (len(antrianTerdepan) <= 0):
         print('Data pada {} masing kosong'.format(menuTersedia[index]))
 
     else:
+        global hasClickedDeleteDataByPoli
         for antrian in tampungAntrian:
             for key, values in list(antrian.items()):
 
@@ -63,11 +58,12 @@ def deleteData(index):
 
         print('Nomor antrian {} berhasil dihapus'.format(menuTersedia[index]))
         if len(antrianByMenu(index)) > 0:
+            hasClickedDeleteDataByPoli = True
             tampilAntrian(index)
         else:
+            hasClickedDeleteDataByPoli = False
             print("Tidak ada antrian yang tersedia")
 
-    print("\n")
     next(index)
 
 
@@ -88,6 +84,7 @@ def tambahAntrian(index):
 
 
 def tampilAntrian(index):
+    print("\n")
     antrianPoli = antrianByMenu(index)
     if len(antrianPoli) > 0:
         print("Berikut list antrian dari ", menuTersedia[index])
@@ -101,6 +98,7 @@ def tampilAntrian(index):
 
 
 def antrianSaatIniByPoli(index):
+    print("\n")
     allAntrian = antrianByMenu(index)
     if len(allAntrian) > 0:
         print('Nomor antrian yang sedang berlangsung yakni : ', allAntrian[0])
@@ -108,6 +106,29 @@ def antrianSaatIniByPoli(index):
         print('Data pada {} masing kosong'.format(menuTersedia[index]))
     print("\n")
 
+    next(index)
+
+
+def truncateData(index):
+    antrianPoli = antrianByMenu(index)
+
+    print("\n")
+    if (len(antrianPoli) <= 0):
+        print('Data pada {} masing kosong'.format(menuTersedia[index]))
+
+    else:
+        for antrian in tampungAntrian:
+            for key in list(antrian.keys()):
+                if (key == index):
+                    del antrian[key]
+
+        print('Antrian {} berhasil di reset'.format(menuTersedia[index]))
+        if len(antrianByMenu(index)) > 0:
+            tampilAntrian(index)
+        else:
+            print("Tidak ada antrian yang tersedia")
+
+    print("\n")
     next(index)
 
 
@@ -119,7 +140,8 @@ def next(indexMenu):
     print("2. Tampil Data")
     print("3. Cek Antrian saat ini")
     print("4. Hapus Data")
-    print("5. Kembali ke menu")
+    print("5. Hapus semua data(Reset)")
+    print("6. Kembali ke menu")
 
     pilih = input('Masukkan pilihan Anda : ')
 
@@ -134,6 +156,8 @@ def next(indexMenu):
         case '4':
             deleteData(indexMenu)
         case '5':
+            truncateData(indexMenu)
+        case '6':
             start()
             print(tampungAntrian)
 
@@ -142,18 +166,45 @@ def next(indexMenu):
             next(indexMenu)
 
 
+def showAllAntrianPoli():
+
+    if (len(tampungAntrian) > 0):
+        grouping = {}
+
+        for antrian in tampungAntrian:
+            for key, value in sorted(antrian.items()):
+                grouping.setdefault(key, []).append(value)
+
+        print('\nBerikut antrian dari semua poli\n')
+        for val in list(grouping.keys()):
+            print("{} => {}".format(menuTersedia[val], grouping[val]))
+
+    else:
+        print('\nAntrian dari semua poli, masing kosong')
+
+    start()
+
+
 def start():
 
     print('\nSilahkan pilih poli dari menu yang tersedia \n')
 
+    cekAntrianPoli = len(menuTersedia)+1
+    exitProgram = len(menuTersedia)+2
+
     for (i, menu) in enumerate(menuTersedia):
         print("{}. {}".format(i+1, menu))
 
-    print("{}. Keluar Program".format(len(menuTersedia)+1))
+    print("{}. Cek semua antrian poli".format(cekAntrianPoli))
+    print("{}. Keluar Program".format(exitProgram))
+
     pilihanMenu = int(input('\ninput angka dari menu yang tersedia : '))
 
-    if (pilihanMenu == len(menuTersedia)+1):
-        exit()
+    if (pilihanMenu == cekAntrianPoli):
+        showAllAntrianPoli()
+    elif (pilihanMenu == exitProgram):
+        quit()
+        # exit()
     else:
         indexMenu = pilihanMenu - 1
 

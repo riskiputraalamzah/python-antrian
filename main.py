@@ -1,7 +1,8 @@
 tampungAntrian = []
 
 
-menuTersedia = ['POLI UMUM', 'POLI GIGI', 'POLI ANAK', 'POLI JANTUNG']
+menuTersedia = ['POLI UMUM', 'POLI GIGI',
+                'POLI ANAK', 'POLI JANTUNG', 'POLI PARU']
 
 hasClickedDeleteDataByPoli = False
 
@@ -208,9 +209,9 @@ def start():
     else:
         indexMenu = pilihanMenu - 1
 
-        if (pilihanMenu < 0 or pilihanMenu > len(menuTersedia)):
+        if (pilihanMenu <= 0 or pilihanMenu > len(menuTersedia)):
             print('\nMenu tidak tersedia')
-
+            start()
         else:
             next(indexMenu)
         # print(tampungAntrian)
